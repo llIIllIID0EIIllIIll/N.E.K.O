@@ -41,15 +41,10 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
-    # 端口映射配置
+    # 端口映射配置 (Chỉ lắng nghe trên localhost 127.0.0.1, không mở ra 0.0.0.0)
     ports:
-      # HTTP端口映射：外部端口48911 -> 容器内部Nginx端口80
-      # 访问方式: http://服务器IP:48911
-      - "48911:80"
-
-      # HTTPS端口映射：外部端口48912 -> 容器内部Nginx端口443
-      # 访问方式: https://服务器IP:48912
-      - "48912:443"
+      - "127.0.0.1:48911:80"
+      - "127.0.0.1:48912:443"
 
     # 卷挂载配置
     volumes:
@@ -62,15 +57,19 @@ services:
     environment:
       # 统一容器内的本地时间；可在 docker/.env 中改为其他 IANA 时区
       - TZ=${TZ:-Asia/Ho_Chi_Minh}
+      - NEKO_TRUSTED_HOSTS=neko.hoancauit.duckdns.org,*.hoancauit.duckdns.org,neko,localhost,127.0.0.1
+      - SSL_DOMAIN=neko.hoancauit.duckdns.org
 
       # 强制所有运行时数据留在上述持久化挂载内，避免存储位置配置指向容器临时层
       - XDG_DATA_HOME=/home/neko/.local/share
       - NEKO_STORAGE_SELECTED_ROOT=/home/neko/.local/share/N.E.K.O
       - NEKO_STORAGE_ANCHOR_ROOT=/home/neko/.local/share/N.E.K.O
 
+
     # 网络配置
     networks:
       - neko-network
+      - web_network
 
   # Bridge tự động kết nối Ollama (localhost:11434) vào Docker
   ollama-bridge:
@@ -85,3 +84,7 @@ services:
 networks:
   neko-network:
     driver: bridge
+  web_network:
+    name: web_network
+    external: true
+
