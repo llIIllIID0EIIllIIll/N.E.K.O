@@ -125,11 +125,11 @@ def _matches_lang_code(lang_lower: str, code: str, aliases: Optional[set] = None
     )
 
 
-_SUPPORTED_LANGUAGE_CODES: tuple = ('zh', 'en', 'ja', 'ko', 'ru', 'es', 'pt')
+_SUPPORTED_LANGUAGE_CODES: tuple = ('zh', 'en', 'ja', 'ko', 'ru', 'es', 'pt', 'vi')
 _SUPPORTED_STEAM_LITERALS: frozenset = frozenset({
     'schinese', 'tchinese', 'english', 'japanese',
     'koreana', 'korean', 'russian', 'spanish', 'latam',
-    'portuguese', 'brazilian',
+    'portuguese', 'brazilian', 'vietnamese',
 })
 _LEGACY_SYSTEM_LANGUAGE_NAMES = {
     'english': 'en',
@@ -138,6 +138,7 @@ _LEGACY_SYSTEM_LANGUAGE_NAMES = {
     'russian': 'ru',
     'spanish': 'es',
     'portuguese': 'pt',
+    'vietnamese': 'vi',
     'chinese': 'zh',
     'chinese (simplified)': 'zh',
     'simplified chinese': 'zh',
@@ -1136,6 +1137,7 @@ def normalize_language_code(lang: str, format: str = 'short') -> str:
         'latam': 'es',         # 西班牙语（拉美）— 归一到 es
         'portuguese': 'pt',    # 葡萄牙语（欧洲）
         'brazilian': 'pt',     # 葡萄牙语（巴西）— 归一到 pt
+        'vietnamese': 'vi',    # 越南语
     }
     
     # 先检查是否是 Steam 语言代码
@@ -1157,6 +1159,8 @@ def normalize_language_code(lang: str, format: str = 'short') -> str:
                 return 'es'
             elif normalized.startswith('pt'):
                 return 'pt'
+            elif normalized.startswith('vi'):
+                return 'vi'
         elif format == 'full' and normalized == 'zh':
             return 'zh-CN'
         return normalized
@@ -1184,6 +1188,8 @@ def normalize_language_code(lang: str, format: str = 'short') -> str:
         return 'es'
     elif _matches_lang_code(lang_lower, 'pt', {'portuguese', 'brazilian'}):
         return 'pt'
+    elif _matches_lang_code(lang_lower, 'vi', {'vietnamese'}):
+        return 'vi'
     elif lang_lower.startswith('en'):
         return 'en'
     else:

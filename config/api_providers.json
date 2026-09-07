@@ -59,6 +59,18 @@
     }
   },
   "assist_api_providers": {
+    "ollama": {
+      "key": "ollama",
+      "name": "Ollama (AI Gateway)",
+      "description": "Pangolin AI Gateway (qwen3.5:latest, qwen2.5-coder:7b)",
+      "openrouter_url": "https://ai.hoancauit.duckdns.org/v1",
+      "conversation_model": "qwen3.5:latest",
+      "summary_model": "qwen2.5-coder:7b",
+      "correction_model": "qwen2.5-coder:7b",
+      "emotion_model": "qwen2.5-coder:7b",
+      "vision_model": "qwen3.5:latest",
+      "agent_model": "qwen2.5-coder:7b"
+    },
     "free": {
       "key": "free",
       "name": "免费版（猫娘专属福利）",
@@ -368,9 +380,14 @@
     "claude": "ASSIST_API_KEY_CLAUDE",
     "grok": "ASSIST_API_KEY_GROK",
     "openrouter": "ASSIST_API_KEY_OPENROUTER",
-    "orcarouter": "ASSIST_API_KEY_ORCAROUTER"
+    "orcarouter": "ASSIST_API_KEY_ORCAROUTER",
+    "ollama": "ASSIST_API_KEY_OLLAMA"
   },
   "api_key_registry": {
+    "ollama": {
+      "config_field": "assistApiKeyOllama",
+      "restricted": false
+    },
     "qwen": {
       "config_field": "assistApiKeyQwen",
       "restricted": false

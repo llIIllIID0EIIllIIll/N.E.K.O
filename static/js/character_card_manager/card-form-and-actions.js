@@ -4,6 +4,7 @@ const CHARACTER_LANGUAGE_OPTIONS = Object.freeze([
     { code: 'zh-CN', label: '简体中文' },
     { code: 'zh-TW', label: '繁體中文' },
     { code: 'en', label: 'English' },
+    { code: 'vi', label: 'Tiếng Việt' },
     { code: 'ja', label: '日本語' },
     { code: 'ko', label: '한국어' },
     { code: 'ru', label: 'Русский' },

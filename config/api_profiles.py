@@ -40,6 +40,7 @@ DEFAULT_CORE_CONFIG = {
     "assistApiKeyGrok": "",
     "assistApiKeyDoubao": "",
     "assistApiKeyDoubaoTts": "",
+    "assistApiKeyOllama": "",
     "mcpToken": "",
     "agentModelUrl": "",
     "agentModelId": "",
@@ -92,6 +93,15 @@ DEFAULT_CORE_API_PROFILES = {
 }
 
 DEFAULT_ASSIST_API_PROFILES = {
+    'ollama': {
+        'OPENROUTER_URL': "https://ai.hoancauit.duckdns.org/v1",
+        'CONVERSATION_MODEL': "qwen3.5:latest",
+        'SUMMARY_MODEL': "qwen2.5-coder:7b",
+        'CORRECTION_MODEL': "qwen2.5-coder:7b",
+        'EMOTION_MODEL': "qwen2.5-coder:7b",
+        'VISION_MODEL': "qwen3.5:latest",
+        'AGENT_MODEL': "qwen2.5-coder:7b",
+    },
     'free': {
         'OPENROUTER_URL': "https://www.lanlan.tech/text/v1",
         'CONVERSATION_MODEL' : "free-model" ,

@@ -53,6 +53,13 @@ services:
 
       # 2. 源码模式的调试日志回退目录
       - ./logs:/app/logs
+
+      # 3. Source code overrides (localization & provider configuration)
+      - ../static:/app/static
+      - ../templates:/app/templates
+      - ../utils/language_utils.py:/app/utils/language_utils.py
+      - ../config/api_providers.json:/app/config/api_providers.json
+      - ../config/api_profiles.py:/app/config/api_profiles.py
     # 环境变量
     environment:
       # 统一容器内的本地时间；可在 docker/.env 中改为其他 IANA 时区

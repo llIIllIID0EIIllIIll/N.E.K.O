@@ -26,12 +26,10 @@
     window.i18nInitialized = true;
 
     // 支持的语言列表
-    const SUPPORTED_LANGUAGES = ['zh-CN', 'zh-TW', 'en', 'ja', 'ko', 'ru', 'es', 'pt'];
+    const SUPPORTED_LANGUAGES = ['zh-CN', 'zh-TW', 'en', 'ja', 'ko', 'ru', 'es', 'pt', 'vi'];
 
     // locale 资源版本（用于 cache-busting，避免客户端长期缓存旧语言包导致新增 key 不生效）
-    // 合并 Day 1/Day 2 引导与 vLLM-Omni 克隆提示后新增了 key；递增版本让 Electron、
-    // Docker 等长期缓存重新拉取完整语言包，避免界面直接显示 voice.* key。
-    const LOCALE_VERSION = '2026-09-02-vllm-omni-clone-tts-state';
+    const LOCALE_VERSION = '2026-09-07-vi-localization';
     function initDecorativeImageDragGuard() {
         const markImage = (img) => {
             if (!(img instanceof HTMLImageElement)) return;
@@ -108,6 +106,7 @@
         if (langCode === 'ru') return 'ru';
         if (langCode === 'es') return 'es';
         if (langCode === 'pt') return 'pt';
+        if (langCode === 'vi') return 'vi';
         if (langCode === 'zh') {
             if (/(tw|hk|hant)/i.test(value)) {
                 return 'zh-TW';
@@ -128,6 +127,7 @@
         Object.freeze({ code: 'zh-CN', label: '简体中文' }),
         Object.freeze({ code: 'zh-TW', label: '繁體中文' }),
         Object.freeze({ code: 'en', label: 'English' }),
+        Object.freeze({ code: 'vi', label: 'Tiếng Việt' }),
         Object.freeze({ code: 'ja', label: '日本語' }),
         Object.freeze({ code: 'ko', label: '한국어' }),
         Object.freeze({ code: 'ru', label: 'Русский' }),
@@ -699,7 +699,7 @@
             // 初始化 i18next
             i18next.init({
                 lng: INITIAL_LANGUAGE,
-                fallbackLng: 'zh-CN', // 默认回退到中文
+                fallbackLng: ['en', 'zh-CN'], // 回退到英文，再回退到中文
                 supportedLngs: SUPPORTED_LANGUAGES,
                 ns: ['translation'],
                 defaultNS: 'translation',
@@ -789,7 +789,7 @@
                 .use(i18nextHttpBackend)
                 .init({
                     lng: INITIAL_LANGUAGE,
-                    fallbackLng: 'zh-CN', // 默认回退到中文
+                    fallbackLng: ['en', 'zh-CN'], // 回退到英文，再回退到中文
                     supportedLngs: SUPPORTED_LANGUAGES,
                     ns: ['translation'],
                     defaultNS: 'translation',
@@ -939,15 +939,46 @@
             return i18next.changeLanguage(lng);
         };
 
+        function bindUiLanguageSelectors() {
+            const selectors = [document.getElementById('uiLanguageSelect'), document.getElementById('globalUiLanguageSelect')].filter(Boolean);
+            selectors.forEach(select => {
+                const currentLang = i18next.language || 'en';
+                for (let i = 0; i < select.options.length; i++) {
+                    if (select.options[i].value === currentLang || (currentLang.startsWith('zh') && select.options[i].value.startsWith('zh'))) {
+                        select.selectedIndex = i;
+                        break;
+                    }
+                }
+                select.onchange = async function () {
+                    const newLang = this.value;
+                    try {
+                        await window.changeLanguage(newLang);
+                        localStorage.setItem('i18nextLng', newLang);
+                        fetch('/api/config/ui-language', {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ language: newLang })
+                        }).catch(e => console.warn('Failed to save ui-language override:', e));
+                    } catch (err) {
+                        console.error('Failed to change language:', err);
+                    }
+                };
+            });
+        }
+
+        window.addEventListener('localechange', bindUiLanguageSelectors);
+
         // 确保在 DOM 加载完成后更新文本
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', function () {
                 updatePageTexts();
                 updateLive2DDynamicTexts();
+                bindUiLanguageSelectors();
             });
         } else {
             updatePageTexts();
             updateLive2DDynamicTexts();
+            bindUiLanguageSelectors();
         }
 
         console.log('[i18n] Normal functions exported successfully');

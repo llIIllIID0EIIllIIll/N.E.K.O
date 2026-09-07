@@ -63,7 +63,23 @@
     <div id="main-content">
         <div class="container">
             <div class="container-header page-title-bar">
-                <h2 data-i18n="api.settings" data-text="API Key Settings">API Key 设置</h2>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <h2 data-i18n="api.settings" data-text="API Key Settings">API Key 设置</h2>
+                    <div class="ui-language-selector-wrap" style="display: inline-flex; align-items: center; gap: 6px; margin-left: 12px;">
+                        <span style="font-size: 14px;">🌐</span>
+                        <select id="uiLanguageSelect" style="padding: 4px 10px; font-size: 13px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.15); background: rgba(255,255,255,0.85); backdrop-filter: blur(8px); cursor: pointer; color: #333; font-weight: 500;">
+                            <option value="en">English</option>
+                            <option value="vi">Tiếng Việt</option>
+                            <option value="zh-CN">简体中文</option>
+                            <option value="zh-TW">繁體中文</option>
+                            <option value="ja">日本語</option>
+                            <option value="ko">한국어</option>
+                            <option value="ru">Русский</option>
+                            <option value="es">Español</option>
+                            <option value="pt">Português</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="neko-window-controls">
                     <button type="button" class="neko-window-control-btn" data-neko-window-control="pin" hidden data-i18n-title="common.pinWindow" data-i18n-aria="common.pinWindow" title="置顶窗口" aria-label="置顶窗口" aria-pressed="false">
                         <span class="neko-window-pin-icon" aria-hidden="true"></span>
