@@ -27,15 +27,19 @@ services:
   neko-main:
     # 容器镜像配置 - 支持通过环境变量切换版本
     # 标准版：latest (或 latest-standard) / 完整版：latest-full
-    image: ${NEKO_IMAGE:-docker.gh-proxy.org/ghcr.io/project-n-e-k-o/n.e.k.o:${NEKO_IMAGE_VERSION:-latest}}
+    image: ${NEKO_IMAGE:-ghcr.io/project-n-e-k-o/n.e.k.o:${NEKO_IMAGE_VERSION:-latest}}
 
     # 备用镜像源（取消注释以使用）
-    # image: ${NEKO_IMAGE:-ghcr.io/project-n-e-k-o/n.e.k.o:${NEKO_IMAGE_VERSION:-latest}}
+    # image: ${NEKO_IMAGE:-docker.gh-proxy.org/ghcr.io/project-n-e-k-o/n.e.k.o:${NEKO_IMAGE_VERSION:-latest}}
     # image: ${NEKO_IMAGE:-projectneko/n.e.k.o:${NEKO_IMAGE_VERSION:-latest}}
 
     # 容器配置
     container_name: neko
     restart: unless-stopped
+
+    # Cho phép container truy cập host machine (Ollama bridge)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
     # 端口映射配置
     ports:
@@ -48,9 +52,6 @@ services:
       - "48912:443"
 
     # 卷挂载配置
-    # ⚠️ 旧版本用 ./N.E.K.O + ./ssl 两个挂载，现已合并为 ./neko-home 一个。
-    #    从旧版升级必须先迁移数据（见 README「从旧版本升级」一节），
-    #    否则容器会对着一个空目录启动，表现为"数据全没了"。
     volumes:
       # 1. neko 用户主目录（用户数据、SSL 证书与私钥）
       - ./neko-home:/home/neko
@@ -60,7 +61,7 @@ services:
     # 环境变量
     environment:
       # 统一容器内的本地时间；可在 docker/.env 中改为其他 IANA 时区
-      - TZ=${TZ:-Asia/Shanghai}
+      - TZ=${TZ:-Asia/Ho_Chi_Minh}
 
       # 强制所有运行时数据留在上述持久化挂载内，避免存储位置配置指向容器临时层
       - XDG_DATA_HOME=/home/neko/.local/share
@@ -70,6 +71,15 @@ services:
     # 网络配置
     networks:
       - neko-network
+
+  # Bridge tự động kết nối Ollama (localhost:11434) vào Docker
+  ollama-bridge:
+    image: alpine/socat
+    container_name: neko-ollama-bridge
+    network_mode: host
+    command: tcp-listen:11435,fork,bind=0.0.0.0 tcp-connect:127.0.0.1:11434
+    restart: unless-stopped
+
 
 # 网络定义
 networks:
