@@ -24,6 +24,8 @@ datas = []
 binaries = []
 hiddenimports = []
 hiddenimports += collect_submodules('plugin.sdk', on_error='raise')
+if os.environ.get('NEKO_WEBVIEW_BUILD') == '1':
+    hiddenimports += ['webview', 'webview.platforms.edgechromium']
 
 # 收集关键包的所有内容（根据实际 import 检查）
 critical_packages = [
@@ -389,7 +391,7 @@ hiddenimports += [
 ]
 
 a = Analysis(
-    [os.path.join(PROJECT_ROOT, 'launcher.py')],  # 使用绝对路径
+    [os.path.join(PROJECT_ROOT, 'desktop_app.py' if os.environ.get('NEKO_WEBVIEW_BUILD') == '1' else 'launcher.py')],
     pathex=[PROJECT_ROOT],  # 添加项目根目录到路径
     binaries=binaries,
     datas=datas,
@@ -409,7 +411,7 @@ exe = EXE(
     a.scripts,
     [],  # 不打包 binaries 到 exe
     exclude_binaries=True,  # 关键：排除二进制文件，使用 onedir 模式
-    name='projectneko_server',
+    name='N.E.K.O' if os.environ.get('NEKO_WEBVIEW_BUILD') == '1' else 'projectneko_server',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
